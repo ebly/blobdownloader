@@ -1,0 +1,10 @@
+node_modules/
+bin/
+.workbuddy/
+testdata/out/
+testdata/sample.mp4
+testdata/hls/*.ts
+*.log
+.git-api-push.js
+.DS_Store
+Thumbs.db

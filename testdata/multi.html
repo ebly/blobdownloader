@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><title>场景 5 · 多视频源</title>
+<style>body{font-family:system-ui,sans-serif;background:#12141c;color:#e6e9f2;padding:20px}
+video{width:280px;background:#000;border-radius:6px;margin:6px}code{color:#9fe1cb}</style>
+</head>
+<body>
+  <h1>场景 5 · 多视频源（blob + http）</h1>
+  <p>两个 video：一个是 HTTP 直链，一个是页面生成的 blob。扫描后应出现 2 个可勾选源，一起下载。</p>
+  <video id="httpVideo" controls src="/sample.mp4"></video>
+  <video id="blobVideo" controls></video>
+  <script>
+    fetch('/sample.mp4').then(function (r) { return r.blob(); }).then(function (blob) {
+      var url = URL.createObjectURL(blob);
+      document.getElementById('blobVideo').src = url;
+      window.__testBlobUrl = url;
+    });
+  </script>
+</body>
+</html>

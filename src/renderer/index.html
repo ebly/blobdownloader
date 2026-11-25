@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' blob: http: https:" />
+  <title>BlobDownloader · 视频下载工具</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">BD</div>
+        <div>
+          <h1>BlobDownloader</h1>
+          <p>在线视频 / Blob URL 流式下载工具</p>
+        </div>
+      </div>
+      <span class="badge" id="engineBadge">就绪</span>
+    </header>
+
+    <main class="content">
+      <section class="panel">
+        <h2 class="panel-title">1. 视频地址</h2>
+        <label class="field">
+          <span class="field-label">地址 <em>支持 http(s):// 直链 或 blob: 地址</em></span>
+          <input type="text" id="urlInput" placeholder="https://example.com/video.mp4  或  blob:https://.../uuid" spellcheck="false" />
+        </label>
+        <p class="hint">Blob URL 必须在当前窗口上下文中有效；页面刷新或释放后地址会失效。</p>
+      </section>
+
+      <section class="panel">
+        <h2 class="panel-title">2. 保存位置</h2>
+        <label class="field">
+          <span class="field-label">本地目录</span>
+          <div class="row">
+            <input type="text" id="dirInput" placeholder="点击右侧按钮选择保存目录" readonly />
+            <button type="button" class="btn btn-ghost" id="selectDirBtn">选择目录…</button>
+          </div>
+        </label>
+        <div class="grid-2">
+          <label class="field">
+            <span class="field-label">文件名（不含扩展名）</span>
+            <input type="text" id="nameInput" placeholder="my-video" />
+          </label>
+          <label class="field">
+            <span class="field-label">扩展名</span>
+            <input type="text" id="extInput" value=".mp4" placeholder=".mp4" />
+          </label>
+        </div>
+        <label class="field">
+          <span class="field-label">同名文件</span>
+          <select id="policySelect">
+            <option value="rename">自动重命名（推荐）</option>
+            <option value="overwrite">直接覆盖</option>
+          </select>
+        </label>
+        <p class="hint path-hint" id="targetHint">最终路径：尚未选择目录</p>
+      </section>
+
+      <section class="panel">
+        <h2 class="panel-title">3. 内置浏览器（用于 Blob 地址）</h2>
+        <div class="row">
+          <input type="text" id="pageUrlInput" placeholder="输入视频页面地址，如 https://example.com/player" spellcheck="false" />
+          <button type="button" class="btn btn-secondary" id="openPageBtn">打开页面</button>
+          <button type="button" class="btn btn-ghost" id="scanBtn">扫描视频源</button>
+          <button type="button" class="btn btn-ghost" id="inspectBtn">查看页面结构</button>
+        </div>
+        <webview id="videoWebView" src="about:blank" preload="./webview-preload.js"
+                 style="display:inline-flex;width:100%;height:240px;margin-top:10px;border:1px solid var(--border);border-radius:7px;background:#0d0f16"></webview>
+        <div class="source-toolbar">
+          <label class="check-all"><input type="checkbox" id="selectAllSources" /> 全选</label>
+          <button type="button" class="btn btn-primary" id="downloadSelectedBtn">下载选中源</button>
+          <span class="source-count" id="sourceCount">未扫描</span>
+        </div>
+        <div class="source-list" id="sourceList"></div>
+        <pre class="inspect-box" id="inspectBox" hidden></pre>
+        <p class="hint">勾选多个源可一起下载，mp4 / webm / blob 都支持；每项单独命名、单独记进度。</p>
+      </section>
+
+      <section class="panel">
+        <h2 class="panel-title">4. 下载任务</h2>
+        <div class="controls">
+          <button type="button" class="btn btn-secondary" id="startBtn">用上方地址新建任务</button>
+        </div>
+        <div class="task-list" id="taskList">
+          <p class="hint" id="taskEmpty">还没有任务。扫描后勾选视频源，或手动填入地址创建任务。</p>
+        </div>
+      </section>
+
+      <section class="panel log-panel">
+        <h2 class="panel-title">运行日志</h2>
+        <div class="log" id="logBox"></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast-stack" id="toastStack"></div>
+  <script src="app.js"></script>
+</body>
+</html>

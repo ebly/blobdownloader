@@ -1,0 +1,14 @@
+{
+  "name": "blobdownloader",
+  "version": "1.0.0",
+  "description": "基于 Electron 的视频资源下载工具，支持 HTTP(S) 直链与 Blob URL 流式下载",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "check": "node --check main.js && node --check preload.js && node --check src/main/download-manager.js && node --check src/main/http-downloader.js && node --check src/main/hls-downloader.js && node --check src/main/blob-downloader.js && node --check src/main/file-utils.js && node --check src/renderer/app.js && node --check src/renderer/webview-preload.js"
+  },
+  "devDependencies": {
+    "electron": "^30.0.0"
+  },
+  "license": "MIT"
+}

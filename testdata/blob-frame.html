@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><title>blob frame</title>
+<style>body{margin:0;background:#000}video{width:100%;height:100%}</style>
+</head>
+<body>
+  <video id="v" controls></video>
+  <script>
+    // 在 iframe 自己的上下文里把 mp4 读成 Blob
+    fetch('/sample.mp4').then(function (r) { return r.blob(); }).then(function (blob) {
+      var url = URL.createObjectURL(blob);
+      document.getElementById('v').src = url;
+      // 把 Blob 对象本体交给顶层（Blob 可被结构化克隆），
+      // 让顶层用同一份数据创建可被工具读取的 blob URL
+      parent.postMessage({ __bdBlobReady: true, blob: blob, frameUrl: url }, '*');
+    });
+  </script>
+</body>
+</html>

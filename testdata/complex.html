@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><title>场景 4 · 复杂结构里的 Blob</title>
+<style>
+body{font-family:system-ui,sans-serif;background:#12141c;color:#e6e9f2;padding:20px}
+#host{border:1px dashed #444;border-radius:8px;padding:12px;min-height:300px}
+code{color:#9fe1cb}
+</style></head>
+<body>
+  <h1>场景 4 · ShadowRoot 内嵌 iframe + Blob</h1>
+  <p>页面顶层只有 <code>&lt;div id="host"&gt;</code>；iframe 在 ShadowRoot 里，blob 由 iframe 生成后交给顶层。</p>
+  <p>点 <code>扫描视频源</code> 应看到一条 <code>blob:</code> 地址（label 含 iframe 路径），点它下载即可验证复杂结构里的 blob。</p>
+  <div id="host"></div>
+
+  <script>
+    var host = document.getElementById('host');
+    var sr = host.attachShadow({ mode: 'open' });
+    sr.innerHTML =
+      '<style>:host{display:block}</style>' +
+      '<div class="player"><iframe id="playerFrame" src="/blob-frame.html"></iframe></div>';
+
+    // 接收 iframe 传来的 Blob，在顶层上下文创建工具可读的 blob URL
+    window.addEventListener('message', function (e) {
+      if (!e.data || e.data.__bdBlobReady !== true || !(e.data.blob instanceof Blob)) return;
+      var url = URL.createObjectURL(e.data.blob);
+      window.__testBlobUrl = url;
+      var frame = sr.querySelector('#playerFrame');
+      try { frame.contentDocument.getElementById('v').src = url; } catch (err) {}
+    });
+  </script>
+</body>
+</html>
